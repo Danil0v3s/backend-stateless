@@ -1,7 +1,7 @@
 package br.com.firstsoft.backendstateless.security.filter;
 
 import br.com.firstsoft.backendstateless.business.vo.User;
-import br.com.firstsoft.backendstateless.oauth.FacebookProvider;
+import br.com.firstsoft.backendstateless.oauth.GoogleProvider;
 import br.com.firstsoft.backendstateless.security.JwtManager;
 import br.com.firstsoft.backendstateless.services.UserService;
 import org.springframework.core.env.Environment;
@@ -20,14 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+public class GoogleAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private JwtManager jwtManager;
     private Environment environment;
     private UserService userService;
 
-    public FacebookAuthenticationFilter(Environment environment, AuthenticationManager authenticationManager, JwtManager jwtManager, UserService userService) {
-        super(new AntPathRequestMatcher(environment.getProperty("backend-stateless.facebook-login-url")));
+    public GoogleAuthenticationFilter(Environment environment, AuthenticationManager authenticationManager, JwtManager jwtManager, UserService userService) {
+        super(new AntPathRequestMatcher(environment.getProperty("backend-stateless.google-login-url")));
         super.setAuthenticationManager(authenticationManager);
         this.environment = environment;
         this.jwtManager = jwtManager;
@@ -40,7 +40,7 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
         String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (accessToken != null && !accessToken.isEmpty()) {
-            FacebookProvider provider = new FacebookProvider(accessToken);
+            GoogleProvider provider = new GoogleProvider(accessToken);
             User user = provider.auth();
 
             Authentication managedUser = getAuthentication(user);
@@ -52,6 +52,7 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
 
     private Authentication getAuthentication(User user) {
         if (user != null) {
+
             User managedUser = userService.findByEmail(user.getEmail());
 
             if (managedUser == null) {

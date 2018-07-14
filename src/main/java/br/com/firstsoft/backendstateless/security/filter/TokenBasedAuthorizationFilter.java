@@ -1,32 +1,33 @@
 package br.com.firstsoft.backendstateless.security.filter;
 
+import br.com.firstsoft.backendstateless.business.vo.User;
 import br.com.firstsoft.backendstateless.security.JwtManager;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.firstsoft.backendstateless.services.UserService;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
 
 public class TokenBasedAuthorizationFilter extends BasicAuthenticationFilter {
 
     private Environment environment;
-
     private JwtManager jwtManager;
+    private UserService userService;
 
-    public TokenBasedAuthorizationFilter(AuthenticationManager authenticationManager, Environment environment, JwtManager jwtManager) {
+    public TokenBasedAuthorizationFilter(AuthenticationManager authenticationManager, Environment environment, JwtManager jwtManager, UserService userService) {
         super(authenticationManager);
         this.environment = environment;
         this.jwtManager = jwtManager;
+        this.userService = userService;
     }
 
     @Override
@@ -37,9 +38,18 @@ public class TokenBasedAuthorizationFilter extends BasicAuthenticationFilter {
         if (authorizationToken != null && !authorizationToken.isEmpty()) {
             authorizationToken = authorizationToken.replaceFirst(environment.getProperty("backend-stateless.token-prefix"), "");
 
-            String username = jwtManager.decode(authorizationToken);
+            String userEmail = jwtManager.decode(authorizationToken);
 
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList()));
+            if (userEmail != null) {
+                User managedUser = userService.findByEmail(userEmail);
+
+                if (managedUser != null) {
+                    SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(managedUser, null, AuthorityUtils.createAuthorityList("USER")));
+                } else {
+                    throw new ServletException("Invalid token");
+                }
+            }
+
         }
 
         chain.doFilter(request, response);
