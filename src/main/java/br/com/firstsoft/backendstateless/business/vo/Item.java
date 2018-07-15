@@ -29,7 +29,7 @@ public class Item {
     private String valor;
 
     @JsonProperty("Detalhes")
-    @OneToOne(mappedBy = "item", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "item", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private ItemDetalhes itemDetalhes;
 
     @JsonIgnore

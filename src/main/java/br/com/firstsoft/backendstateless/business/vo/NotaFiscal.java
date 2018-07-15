@@ -27,4 +27,13 @@ public class NotaFiscal {
     @OneToMany(mappedBy = "notaFiscal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Item> items;
 
+    public void setParentToChildren() {
+        this.dadosBasicos.setNotaFiscal(this);
+        this.emitente.setNotaFiscal(this);
+        this.items.forEach(item -> {
+            item.setNotaFiscal(this);
+            item.getItemDetalhes().setItem(item);
+        });
+    }
+
 }
