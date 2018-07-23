@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Entity
@@ -16,24 +15,25 @@ public class NotaFiscal {
     private String chaveAcesso;
 
     @JsonProperty("DadosBasicos")
-    @OneToOne(mappedBy = "notaFiscal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "notaFiscal", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private DadosBasicos dadosBasicos;
 
     @JsonProperty("Emitente")
-    @OneToOne(mappedBy = "notaFiscal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "notaFiscal", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Emitente emitente;
 
-    @JsonProperty("Itens")
-    @OneToMany(mappedBy = "notaFiscal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Item> items;
+//    @JsonProperty("Itens")
+//    @OneToMany(mappedBy = "notaFiscal", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+//    private List<ItemDTO> items;
 
     public void setParentToChildren() {
         this.dadosBasicos.setNotaFiscal(this);
+        this.dadosBasicos.setPrimaryKey();
         this.emitente.setNotaFiscal(this);
-        this.items.forEach(item -> {
-            item.setNotaFiscal(this);
-            item.getItemDetalhes().setItem(item);
-        });
+//        this.items.forEach(item -> {
+//            item.setNotaFiscal(this);
+//            item.getItemDetalhes().setItem(item);
+//        });
     }
 
 }

@@ -1,20 +1,19 @@
 package br.com.firstsoft.backendstateless.business.vo;
 
+import br.com.firstsoft.backendstateless.business.vo.embeddables.DadosBasicosPK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Data
 @Entity
 @Table(name = "tb_dados_basicos_nf")
 public class DadosBasicos {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID dadosBasicosID;
+    @EmbeddedId
+    private DadosBasicosPK dadosBasicosPK;
 
     @JsonProperty("DataSaidaEntrada")
     private String dataSaidaEntrada;
@@ -38,4 +37,8 @@ public class DadosBasicos {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nota_fiscal")
     private NotaFiscal notaFiscal;
+
+    public void setPrimaryKey() {
+        this.dadosBasicosPK = new DadosBasicosPK(dataEmissao, modelo, numero, serie, valorNota);
+    }
 }
