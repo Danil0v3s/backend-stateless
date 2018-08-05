@@ -22,18 +22,9 @@ public class NotaFiscal {
     @OneToOne(mappedBy = "notaFiscal", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Emitente emitente;
 
-//    @JsonProperty("Itens")
-//    @OneToMany(mappedBy = "notaFiscal", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-//    private List<ItemDTO> items;
-
     public void setParentToChildren() {
         this.dadosBasicos.setNotaFiscal(this);
-        this.dadosBasicos.setPrimaryKey();
         this.emitente.setNotaFiscal(this);
-//        this.items.forEach(item -> {
-//            item.setNotaFiscal(this);
-//            item.getItemDetalhes().setItem(item);
-//        });
     }
 
 }

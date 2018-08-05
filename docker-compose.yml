@@ -17,3 +17,11 @@ services:
     environment:
       POSTGRES_PASSWORD: nesc4u123
       POSTGRES_DB: springboot
+  springboot:
+    build:
+      context: .
+      dockerfile: ./java/src/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
