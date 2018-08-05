@@ -1,15 +1,23 @@
 version: '3'
 services:
+  springboot:
+    build:
+      context: .
+      dockerfile: ./java/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    links:
+      - postgres
   crawler:
     build:
       context: .
       dockerfile: ./python/Dockerfile
-    command: python3 main.py
     volumes:
       - ./python/src/:/usr/src/app
     ports:
       - "5000:5000"
-  #docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres
   postgres:
     image: postgres:10-alpine
     ports:
@@ -17,11 +25,5 @@ services:
     environment:
       POSTGRES_PASSWORD: nesc4u123
       POSTGRES_DB: springboot
-  springboot:
-    build:
-      context: .
-      dockerfile: ./java/src/Dockerfile
-    ports:
-      - "8080:8080"
-    depends_on:
-      - postgres
+
+#docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres

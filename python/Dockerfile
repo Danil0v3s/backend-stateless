@@ -15,3 +15,4 @@ COPY ./python/src /usr/src/app/
 RUN pip install --upgrade pip
 RUN pip install -r /usr/src/app/requirements.txt
 WORKDIR /usr/src/app
+ENTRYPOINT ["python3", "main.py"]
