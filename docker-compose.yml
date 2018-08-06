@@ -1,15 +1,5 @@
 version: '3'
 services:
-  springboot:
-    build:
-      context: .
-      dockerfile: ./java/Dockerfile
-    ports:
-      - "8080:8080"
-    depends_on:
-      - postgres
-    links:
-      - postgres
   crawler:
     build:
       context: .

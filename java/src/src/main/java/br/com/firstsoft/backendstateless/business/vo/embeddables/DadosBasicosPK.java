@@ -3,11 +3,10 @@ package br.com.firstsoft.backendstateless.business.vo.embeddables;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @Data
-@Embeddable
+//@Embeddable
 public class DadosBasicosPK implements Serializable {
 
     @JsonProperty("DatadeEmissao")
