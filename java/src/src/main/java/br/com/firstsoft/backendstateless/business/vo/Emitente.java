@@ -5,11 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import javax.persistence.*;
-
 @Data
-@Entity
-@Table(name = "tb_emitente_nf")
+//@Entity
+//@Table(name = "tb_emitente_nf")
 public class Emitente {
 
     @JsonProperty("BairroDistrito")
@@ -21,7 +19,7 @@ public class Emitente {
     @JsonProperty("CNAEFiscal")
     private String cnaeFiscal;
 
-    @Id
+    //    @Id
     @JsonProperty("CNPJ")
     private String cnpj;
 
@@ -59,8 +57,8 @@ public class Emitente {
     private String uf;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "nota_fiscal")
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "nota_fiscal")
     private NotaFiscal notaFiscal;
 
 }
