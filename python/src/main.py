@@ -16,7 +16,6 @@ def formatWord(word):
     return normalizedWord
 
 def scrap_page(url):
-    print(url)
     session.get(url)
     hxs = lxml.html.document_fromstring(session.get(nfeUrl).content)
     nfe = {}
@@ -33,7 +32,7 @@ def scrap_page(url):
     for linha in cabecalho:
         prop = formatWord(linha.xpath(".//span[@class='TextoFundoBrancoNegrito']/text()")[0])
         value = linha.xpath(".//span[@class='linha']/text()")[0]
-        nfe[prop] = re.sub(' +', value)
+        nfe[prop] = re.sub(' +', ' ', value)
 
     for linha in dadosNfe:
         props = linha.xpath(".//span[@class='TextoFundoBrancoNegrito']/text()")
@@ -41,7 +40,7 @@ def scrap_page(url):
         for p, v in zip(props, values):
             prop = formatWord(p)
             value = v.strip()
-            nfe['DadosBasicos'][prop] = re.sub(' +', value)
+            nfe['DadosBasicos'][prop] = re.sub(' +', ' ', value)
     
     for item_table_header_button in hxs.xpath("//img[@src='img/ico_menos.gif']"):
         detail_id = item_table_header_button.get('id')[3:]
@@ -55,7 +54,7 @@ def scrap_page(url):
             for p, v in zip(props, values):
                 prop = formatWord(p)
                 value = v.strip()
-                item[prop] = re.sub(' +', value)
+                item[prop] = re.sub(' +', ' ', value)
             
             item['Detalhes'] = {}
             for linha in hxs.xpath("//div[@id='"+ str(detail_id) +"']"):
@@ -65,7 +64,7 @@ def scrap_page(url):
                 for p, v in zip(props, values):
                     prop = formatWord(p)
                     value = v.strip()
-                    item['Detalhes'][prop] = re.sub(' +', value)
+                    item['Detalhes'][prop] = re.sub(' +', ' ', value)
             
             nfe['Itens'].append(item)
         
@@ -75,7 +74,7 @@ def scrap_page(url):
         for p, v in zip(props, values):
             prop = formatWord(p)
             value = v.strip()
-            nfe['Emitente'][prop] = re.sub(' +', value)
+            nfe['Emitente'][prop] = re.sub(' +', ' ', value)
 
     return nfe
 
@@ -106,7 +105,9 @@ def get():
 
             base_url = options[requestedUF]()
             params = ["{}={}".format(key, scan_request[key]) for key in scan_request]
-            nfe = scrap_page("{}{}".format(base_url, '&'.join(params)))
+            url = "{}{}".format(base_url, '&'.join(params))
+            print(url)
+            nfe = scrap_page(url)
         else:
             return 'UF invalida'
 
