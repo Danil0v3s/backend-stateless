@@ -1,6 +1,6 @@
 package br.com.firstsoft.backendstateless.services;
 
-import br.com.firstsoft.backendstateless.business.vo.NotaFiscal;
+import br.com.firstsoft.backendstateless.business.dto.NotaFiscalDTO;
 import br.com.firstsoft.backendstateless.business.vo.ScanRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -45,11 +45,15 @@ public class InvoiceService {
             }
         }
 
-        ResponseEntity responseEntity = restTemplate.getForEntity(uriBuilder.toUriString(), NotaFiscal.class);
-        NotaFiscal notaFiscal = (NotaFiscal) responseEntity.getBody();
+        /**
+         * TODO: RODAR EM THREAD, E VOLTAR UMA RESPOSTA DE OK PRO CLIENTE.
+         * TODO: GUARDAR O SCANREQUEST NO BANCO VINCULADO AO USUARIO.
+         * TODO: QUANDO A RESPOSTA DO PYTHON VOLTAR, MARCAR O STATUS DO SCANREQUEST DE ACORDO COM A RESPOSTA DO PYTHON, SUCESSO/ERRO, ETC
+         */
+        ResponseEntity responseEntity = restTemplate.getForEntity(uriBuilder.toUriString(), NotaFiscalDTO.class);
+        NotaFiscalDTO notaFiscal = (NotaFiscalDTO) responseEntity.getBody();
 
         if (notaFiscal != null) {
-            notaFiscal.setParentToChildren();
 //            invoiceRepository.save(notaFiscal);
         }
 

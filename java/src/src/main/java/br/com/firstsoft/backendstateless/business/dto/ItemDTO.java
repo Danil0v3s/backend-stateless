@@ -1,4 +1,4 @@
-package br.com.firstsoft.backendstateless.business.vo;
+package br.com.firstsoft.backendstateless.business.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
