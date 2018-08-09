@@ -7,7 +7,7 @@ services:
     volumes:
       - ./python/src/:/usr/src/app
     ports:
-      - "5000:5000"
+      - 5000:5000
   postgres:
     image: postgres:10-alpine
     ports:
@@ -15,5 +15,11 @@ services:
     environment:
       POSTGRES_PASSWORD: nesc4u123
       POSTGRES_DB: springboot
-
+  pgAdmin:
+    image: dpage/pgadmin4
+    ports:
+      - 8083:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@mail.com
+      PGADMIN_DEFAULT_PASSWORD: supersenha
 #docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres
