@@ -3,10 +3,7 @@ package br.com.firstsoft.backendstateless.services;
 import br.com.firstsoft.backendstateless.business.dto.DadosBasicosDTO;
 import br.com.firstsoft.backendstateless.business.dto.NotaFiscalDTO;
 import br.com.firstsoft.backendstateless.business.enums.ScanRequestResult;
-import br.com.firstsoft.backendstateless.business.vo.DadosBasicos;
-import br.com.firstsoft.backendstateless.business.vo.NotaFiscal;
-import br.com.firstsoft.backendstateless.business.vo.ScanRequest;
-import br.com.firstsoft.backendstateless.business.vo.User;
+import br.com.firstsoft.backendstateless.business.vo.*;
 import br.com.firstsoft.backendstateless.business.vo.embeddables.DadosBasicosPK;
 import br.com.firstsoft.backendstateless.repository.EmitenteRepository;
 import br.com.firstsoft.backendstateless.repository.InvoiceRepository;
@@ -27,7 +24,9 @@ import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.Series.CLIENT_ERROR;
@@ -59,6 +58,7 @@ public class InvoiceService {
         if (optionalScanRequest.isPresent()) {
             managedScanRequest = optionalScanRequest.get();
             if (managedScanRequest.getScanRequestResult() == ScanRequestResult.ERROR) {
+                managedScanRequest.setScanRequestResult(ScanRequestResult.PROCESSING);
                 generateInvoiceScan(managedScanRequest);
             }
         } else {
@@ -93,9 +93,6 @@ public class InvoiceService {
             NotaFiscalDTO notaFiscalDTO = (NotaFiscalDTO) responseEntity.getBody();
 
             if (notaFiscalDTO != null) {
-                /*
-                 * TODO: GERAR A NOTA FISCAL QUE SERA SALVA NO BANCO, NORMALIZADA. DEFINIR ESTRUTURA DA ENTIDADE.
-                 */
                 managedScanRequest.setScanRequestResult(ScanRequestResult.SUCCESS);
 
                 saveInvoice(notaFiscalDTO);
@@ -109,6 +106,11 @@ public class InvoiceService {
     }
 
     private void saveInvoice(NotaFiscalDTO notaFiscalDTO) {
+        /*
+         * TODO: VALIDAR ESTA MERDA. ARRUMAR AONDE COLOCAR UMA CHAVE COMPOSTA.
+         */
+
+
         NotaFiscal notaFiscal = new NotaFiscal();
         notaFiscal.setChaveAcesso(notaFiscalDTO.getChaveAcesso());
         notaFiscal.setEmitente(notaFiscalDTO.getEmitente());
@@ -126,6 +128,29 @@ public class InvoiceService {
 
         invoiceRepository.save(notaFiscal);
         emitenteRepository.save(notaFiscal.getEmitente());
+
+        List<ItemNotaFiscal> itemNotaFiscalList = new ArrayList<>();
+
+        notaFiscalDTO.getItens().forEach(itemDTO -> {
+
+            ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
+            itemNotaFiscal.setQuantidade(Double.valueOf(itemDTO.getQuantidade()));
+
+            Item item = new Item();
+            item.setCodigoEAN(itemDTO.getDetalhes().getCodigoEANComercial());
+            item.setCodigoNCM(itemDTO.getDetalhes().getCodigoNCM());
+            item.setDescricao(itemDTO.getDescricao());
+            item.setUnidadeComercial(itemDTO.getUnidadeComercial());
+            itemNotaFiscal.setItem(item);
+
+            ItemValor itemValor = new ItemValor();
+            itemValor.setEmitente(notaFiscal.getEmitente());
+            itemValor.setGeneratedAt(new Date());
+            itemValor.setValorUnitario(Double.valueOf(itemDTO.getDetalhes().getValorUnitariodeComercializacao()));
+            itemNotaFiscal.setItemValor(itemValor);
+
+            itemNotaFiscalList.add(itemNotaFiscal);
+        });
     }
 
     private ScanRequest saveScanRequest(ScanRequest scanRequest) {

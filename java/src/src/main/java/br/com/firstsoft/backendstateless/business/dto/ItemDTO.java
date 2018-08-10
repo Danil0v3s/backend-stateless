@@ -19,6 +19,6 @@ public class ItemDTO {
     private String valor;
 
     @JsonProperty("Detalhes")
-    private ItemDetalhesDTO itemDetalhes;
+    private ItemDetalhesDTO Detalhes;
 
 }
