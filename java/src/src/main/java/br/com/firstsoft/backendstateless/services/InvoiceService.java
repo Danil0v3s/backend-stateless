@@ -5,6 +5,7 @@ import br.com.firstsoft.backendstateless.business.dto.NotaFiscalDTO;
 import br.com.firstsoft.backendstateless.business.enums.ScanRequestResult;
 import br.com.firstsoft.backendstateless.business.vo.*;
 import br.com.firstsoft.backendstateless.business.vo.embeddables.DadosBasicosPK;
+import br.com.firstsoft.backendstateless.business.vo.embeddables.ItemNotaFiscalPK;
 import br.com.firstsoft.backendstateless.repository.EmitenteRepository;
 import br.com.firstsoft.backendstateless.repository.InvoiceRepository;
 import br.com.firstsoft.backendstateless.repository.ScanRequestRepository;
@@ -110,7 +111,6 @@ public class InvoiceService {
          * TODO: VALIDAR ESTA MERDA. ARRUMAR AONDE COLOCAR UMA CHAVE COMPOSTA.
          */
 
-
         NotaFiscal notaFiscal = new NotaFiscal();
         notaFiscal.setChaveAcesso(notaFiscalDTO.getChaveAcesso());
         notaFiscal.setEmitente(notaFiscalDTO.getEmitente());
@@ -136,6 +136,11 @@ public class InvoiceService {
             ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
             itemNotaFiscal.setQuantidade(Double.valueOf(itemDTO.getQuantidade()));
 
+            ItemNotaFiscalPK itemNotaFiscalPK = new ItemNotaFiscalPK();
+            itemNotaFiscalPK.setChaveAcessoNF(notaFiscal.getChaveAcesso());
+            itemNotaFiscalPK.setCodigoEAN(itemDTO.getDetalhes().getCodigoEANComercial());
+            itemNotaFiscal.setItemNotaFiscalPK(itemNotaFiscalPK);
+
             Item item = new Item();
             item.setCodigoEAN(itemDTO.getDetalhes().getCodigoEANComercial());
             item.setCodigoNCM(itemDTO.getDetalhes().getCodigoNCM());
@@ -149,8 +154,12 @@ public class InvoiceService {
             itemValor.setValorUnitario(Double.valueOf(itemDTO.getDetalhes().getValorUnitariodeComercializacao()));
             itemNotaFiscal.setItemValor(itemValor);
 
+            itemNotaFiscal.setNotaFiscal(notaFiscal);
+
             itemNotaFiscalList.add(itemNotaFiscal);
         });
+
+        itemNotaFiscalList.size();
     }
 
     private ScanRequest saveScanRequest(ScanRequest scanRequest) {
