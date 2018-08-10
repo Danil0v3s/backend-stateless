@@ -3,10 +3,11 @@ package br.com.firstsoft.backendstateless.business.vo.embeddables;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @Data
-//@Embeddable
+@Embeddable
 public class DadosBasicosPK implements Serializable {
 
     @JsonProperty("DatadeEmissao")
@@ -19,6 +20,9 @@ public class DadosBasicosPK implements Serializable {
     private String serie;
     @JsonProperty("ValorTotaldaNotaFiscal")
     private String valorNota;
+
+    public DadosBasicosPK() {
+    }
 
     public DadosBasicosPK(String dataEmissao, String modelo, String numero, String serie, String valorNota) {
         this.dataEmissao = dataEmissao;
