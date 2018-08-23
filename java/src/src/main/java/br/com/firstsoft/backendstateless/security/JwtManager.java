@@ -12,8 +12,12 @@ import java.util.UUID;
 @Component
 public class JwtManager {
 
+    private final Environment environment;
+
     @Autowired
-    private Environment environment;
+    public JwtManager(Environment environment) {
+        this.environment = environment;
+    }
 
     public String decode(String token) {
         return Jwts.parser()

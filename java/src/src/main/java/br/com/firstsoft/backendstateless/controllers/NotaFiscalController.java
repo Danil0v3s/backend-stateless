@@ -13,8 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/invoice")
 public class NotaFiscalController {
 
+    private final NotaFiscalService notaFiscalService;
+
     @Autowired
-    private NotaFiscalService notaFiscalService;
+    public NotaFiscalController(NotaFiscalService notaFiscalService) {
+        this.notaFiscalService = notaFiscalService;
+    }
 
     @PostMapping("/generate")
     public ResponseEntity<ScanRequest> requestScan(ScanRequest scanRequest) {

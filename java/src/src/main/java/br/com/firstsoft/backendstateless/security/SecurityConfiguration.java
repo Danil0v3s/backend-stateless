@@ -17,14 +17,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
+    private final JwtManager jwtManager;
+    private final UserService userService;
 
     @Autowired
-    private JwtManager jwtManager;
-
-    @Autowired
-    private UserService userService;
+    public SecurityConfiguration(Environment environment, JwtManager jwtManager, UserService userService) {
+        this.environment = environment;
+        this.jwtManager = jwtManager;
+        this.userService = userService;
+    }
 
     @Bean
     public FacebookAuthenticationFilter facebookAuthenticationFilter() throws Exception {

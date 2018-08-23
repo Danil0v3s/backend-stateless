@@ -11,11 +11,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class AccountService {
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
+    private final JwtManager jwtManager;
 
     @Autowired
-    private JwtManager jwtManager;
+    public AccountService(Environment environment, JwtManager jwtManager) {
+        this.environment = environment;
+        this.jwtManager = jwtManager;
+    }
 
     public User fetchProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
