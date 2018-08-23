@@ -6,12 +6,10 @@ import br.com.firstsoft.backendstateless.business.enums.ScanRequestResult;
 import br.com.firstsoft.backendstateless.business.vo.*;
 import br.com.firstsoft.backendstateless.business.vo.embeddables.DadosBasicosPK;
 import br.com.firstsoft.backendstateless.business.vo.embeddables.ItemNotaFiscalPK;
-import br.com.firstsoft.backendstateless.repository.EmitenteRepository;
-import br.com.firstsoft.backendstateless.repository.InvoiceRepository;
-import br.com.firstsoft.backendstateless.repository.ScanRequestRepository;
+import br.com.firstsoft.backendstateless.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,24 +32,29 @@ import static org.springframework.http.HttpStatus.Series.CLIENT_ERROR;
 import static org.springframework.http.HttpStatus.Series.SERVER_ERROR;
 
 @Service
-public class InvoiceService {
+public class NotaFiscalService {
+
+    private final NotaFiscalRepository notaFiscalRepository;
+    private final ItemNotaFiscalRepository itemNotaFiscalRepository;
+    private final ItemRepository itemRepository;
+    private final ScanRequestRepository scanRequestRepository;
+    private final EmitenteRepository emitenteRepository;
+    private final RestTemplateBuilder restTemplateBuilder;
+
+    @Value("${backend-stateless.scan-service.url}")
+    private String baseUrl;
 
     @Autowired
-    private InvoiceRepository invoiceRepository;
+    public NotaFiscalService(NotaFiscalRepository notaFiscalRepository, ItemNotaFiscalRepository itemNotaFiscalRepository, ItemRepository itemRepository, ScanRequestRepository scanRequestRepository, EmitenteRepository emitenteRepository, RestTemplateBuilder restTemplateBuilder) {
+        this.notaFiscalRepository = notaFiscalRepository;
+        this.itemNotaFiscalRepository = itemNotaFiscalRepository;
+        this.itemRepository = itemRepository;
+        this.scanRequestRepository = scanRequestRepository;
+        this.emitenteRepository = emitenteRepository;
+        this.restTemplateBuilder = restTemplateBuilder;
+    }
 
-    @Autowired
-    private ScanRequestRepository scanRequestRepository;
-
-    @Autowired
-    private EmitenteRepository emitenteRepository;
-
-    @Autowired
-    private Environment environment;
-
-    @Autowired
-    private RestTemplateBuilder restTemplateBuilder;
-
-    public ResponseEntity<ScanRequest> requestInvoiceScan(ScanRequest scanRequest) {
+    public ResponseEntity<ScanRequest> requestScan(ScanRequest scanRequest) {
 
         Optional<ScanRequest> optionalScanRequest = scanRequestRepository.findById(scanRequest.getCHashQRCode());
         ScanRequest managedScanRequest;
@@ -60,17 +63,17 @@ public class InvoiceService {
             managedScanRequest = optionalScanRequest.get();
             if (managedScanRequest.getScanRequestResult() == ScanRequestResult.ERROR) {
                 managedScanRequest.setScanRequestResult(ScanRequestResult.PROCESSING);
-                generateInvoiceScan(managedScanRequest);
+                generateScan(managedScanRequest);
             }
         } else {
             managedScanRequest = saveScanRequest(scanRequest);
-            generateInvoiceScan(managedScanRequest);
+            generateScan(managedScanRequest);
         }
 
         return ResponseEntity.ok(managedScanRequest);
     }
 
-    private void generateInvoiceScan(ScanRequest managedScanRequest) {
+    private void generateScan(ScanRequest managedScanRequest) {
         RestTemplate restTemplate = restTemplateBuilder.errorHandler(new ResponseErrorHandler() {
             @Override
             public boolean hasError(ClientHttpResponse httpResponse) throws IOException {
@@ -96,7 +99,7 @@ public class InvoiceService {
             if (notaFiscalDTO != null) {
                 managedScanRequest.setScanRequestResult(ScanRequestResult.SUCCESS);
 
-                saveInvoice(notaFiscalDTO);
+                saveNotaFiscal(notaFiscalDTO);
             } else {
                 managedScanRequest.setScanRequestResult(ScanRequestResult.ERROR);
             }
@@ -106,11 +109,7 @@ public class InvoiceService {
         scanThread.start();
     }
 
-    private void saveInvoice(NotaFiscalDTO notaFiscalDTO) {
-        /*
-         * TODO: VALIDAR ESTA MERDA. ARRUMAR AONDE COLOCAR UMA CHAVE COMPOSTA.
-         */
-
+    private void saveNotaFiscal(NotaFiscalDTO notaFiscalDTO) {
         NotaFiscal notaFiscal = new NotaFiscal();
         notaFiscal.setChaveAcesso(notaFiscalDTO.getChaveAcesso());
         notaFiscal.setEmitente(notaFiscalDTO.getEmitente());
@@ -125,9 +124,6 @@ public class InvoiceService {
         notaFiscal.setDadosBasicos(dadosBasicos);
 
         notaFiscal.setParentToChildren();
-
-        invoiceRepository.save(notaFiscal);
-        emitenteRepository.save(notaFiscal.getEmitente());
 
         List<ItemNotaFiscal> itemNotaFiscalList = new ArrayList<>();
 
@@ -150,11 +146,18 @@ public class InvoiceService {
             itemNotaFiscal.setValorUnitario(Double.valueOf(itemDTO.getDetalhes().getValorUnitariodeComercializacao()));
 
             itemNotaFiscal.setNotaFiscal(notaFiscal);
+            item.getItemNotaFiscalList().add(itemNotaFiscal);
+
+            itemRepository.save(item);
 
             itemNotaFiscalList.add(itemNotaFiscal);
         });
 
-        itemNotaFiscalList.size();
+        notaFiscal.setItems(itemNotaFiscalList);
+
+        notaFiscalRepository.save(notaFiscal);
+        emitenteRepository.save(notaFiscal.getEmitente());
+        itemNotaFiscalRepository.saveAll(itemNotaFiscalList);
     }
 
     private ScanRequest saveScanRequest(ScanRequest scanRequest) {
@@ -167,7 +170,7 @@ public class InvoiceService {
 
     private UriComponentsBuilder getUriBuilder() {
         return UriComponentsBuilder
-                .fromHttpUrl(environment.getProperty("backend-stateless.scan-service.url", ""));
+                .fromHttpUrl(baseUrl);
     }
 
     private void generateQueryParams(ScanRequest scanRequest, UriComponentsBuilder uriBuilder) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -24,4 +25,11 @@ public class Item {
     public Item() {
     }
 
+    public List<ItemNotaFiscal> getItemNotaFiscalList() {
+        if (this.itemNotaFiscalList == null) {
+            this.itemNotaFiscalList = new ArrayList<>();
+        }
+
+        return this.itemNotaFiscalList;
+    }
 }
