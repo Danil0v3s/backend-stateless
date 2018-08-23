@@ -14,10 +14,7 @@ public class ItemNotaFiscal {
     @EmbeddedId
     private ItemNotaFiscalPK itemNotaFiscalPK;
 
-    @OneToOne(mappedBy = "itemNotaFiscal", fetch = FetchType.EAGER)
-    private ItemValor itemValor;
-
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "item_ean")
     private Item item;
 
@@ -27,6 +24,7 @@ public class ItemNotaFiscal {
     private NotaFiscal notaFiscal;
 
     private Double quantidade;
+    private Double valorUnitario;
 
     public ItemNotaFiscal() {
     }

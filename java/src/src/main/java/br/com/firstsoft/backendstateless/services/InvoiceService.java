@@ -147,12 +147,7 @@ public class InvoiceService {
             item.setDescricao(itemDTO.getDescricao());
             item.setUnidadeComercial(itemDTO.getUnidadeComercial());
             itemNotaFiscal.setItem(item);
-
-            ItemValor itemValor = new ItemValor();
-            itemValor.setEmitente(notaFiscal.getEmitente());
-            itemValor.setGeneratedAt(new Date());
-            itemValor.setValorUnitario(Double.valueOf(itemDTO.getDetalhes().getValorUnitariodeComercializacao()));
-            itemNotaFiscal.setItemValor(itemValor);
+            itemNotaFiscal.setValorUnitario(Double.valueOf(itemDTO.getDetalhes().getValorUnitariodeComercializacao()));
 
             itemNotaFiscal.setNotaFiscal(notaFiscal);
 

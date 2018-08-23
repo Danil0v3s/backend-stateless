@@ -3,10 +3,11 @@ package br.com.firstsoft.backendstateless.business.vo.embeddables;
 import lombok.Data;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 @Data
 @Embeddable
-public class ItemNotaFiscalPK {
+public class ItemNotaFiscalPK implements Serializable {
 
     private String chaveAcessoNF;
     private String codigoEAN;
