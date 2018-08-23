@@ -19,7 +19,8 @@ public class NotaFiscal {
     private DadosBasicos dadosBasicos;
 
     @JsonProperty("Emitente")
-    @OneToOne(mappedBy = "notaFiscal", fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cnpj_emitente")
     private Emitente emitente;
 
     public NotaFiscal() {
@@ -27,7 +28,7 @@ public class NotaFiscal {
 
     public void setParentToChildren() {
         this.dadosBasicos.setNotaFiscal(this);
-        this.emitente.setNotaFiscal(this);
+        this.emitente.getNotaFiscalList().add(this);
     }
 
 }

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -59,8 +61,15 @@ public class Emitente {
     private String uf;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "nota_fiscal")
-    private NotaFiscal notaFiscal;
+    @OneToMany(mappedBy = "emitente", fetch = FetchType.LAZY)
+    private List<NotaFiscal> notaFiscalList;
+
+    public List<NotaFiscal> getNotaFiscalList() {
+        if (this.notaFiscalList == null) {
+            this.notaFiscalList = new ArrayList<>();
+        }
+
+        return this.notaFiscalList;
+    }
 
 }
