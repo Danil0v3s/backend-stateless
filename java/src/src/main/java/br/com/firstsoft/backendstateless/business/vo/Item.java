@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -17,9 +18,8 @@ public class Item {
     private String unidadeComercial;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_nota_fiscal")
-    private ItemNotaFiscal itemNotaFiscal;
+    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+    private List<ItemNotaFiscal> itemNotaFiscalList;
 
     public Item() {
     }

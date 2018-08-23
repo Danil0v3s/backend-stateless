@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -22,6 +23,9 @@ public class NotaFiscal {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cnpj_emitente")
     private Emitente emitente;
+
+    @OneToMany(mappedBy = "notaFiscal", fetch = FetchType.LAZY)
+    private List<ItemNotaFiscal> items;
 
     public NotaFiscal() {
     }

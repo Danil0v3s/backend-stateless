@@ -15,16 +15,18 @@ public class ItemNotaFiscal {
     private ItemNotaFiscalPK itemNotaFiscalPK;
 
     @OneToOne(mappedBy = "itemNotaFiscal", fetch = FetchType.EAGER)
-    private Item item;
-    private Double quantidade;
-
-    @OneToOne(mappedBy = "itemNotaFiscal", fetch = FetchType.EAGER)
     private ItemValor itemValor;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_ean")
+    private Item item;
+
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nota_fiscal")
     private NotaFiscal notaFiscal;
+
+    private Double quantidade;
 
     public ItemNotaFiscal() {
     }
