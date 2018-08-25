@@ -20,11 +20,11 @@ public class NotaFiscal {
     private DadosBasicos dadosBasicos;
 
     @JsonProperty("Emitente")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "cnpj_emitente")
     private Emitente emitente;
 
-    @OneToMany(mappedBy = "notaFiscal", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "notaFiscal", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ItemNotaFiscal> items;
 
     public NotaFiscal() {

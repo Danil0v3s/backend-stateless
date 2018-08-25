@@ -39,19 +39,22 @@ public class NotaFiscalService {
     private final ItemRepository itemRepository;
     private final ScanRequestRepository scanRequestRepository;
     private final EmitenteRepository emitenteRepository;
+    private final DadosBasicosRepository dadosBasicosRepository;
+
     private final RestTemplateBuilder restTemplateBuilder;
 
     @Value("${backend-stateless.scan-service.url}")
     private String baseUrl;
 
     @Autowired
-    public NotaFiscalService(NotaFiscalRepository notaFiscalRepository, ItemNotaFiscalRepository itemNotaFiscalRepository, ItemRepository itemRepository, ScanRequestRepository scanRequestRepository, EmitenteRepository emitenteRepository, RestTemplateBuilder restTemplateBuilder) {
+    public NotaFiscalService(NotaFiscalRepository notaFiscalRepository, ItemNotaFiscalRepository itemNotaFiscalRepository, ItemRepository itemRepository, ScanRequestRepository scanRequestRepository, EmitenteRepository emitenteRepository, DadosBasicosRepository dadosBasicosRepository, RestTemplateBuilder restTemplateBuilder) {
         this.notaFiscalRepository = notaFiscalRepository;
         this.itemNotaFiscalRepository = itemNotaFiscalRepository;
         this.itemRepository = itemRepository;
         this.scanRequestRepository = scanRequestRepository;
         this.emitenteRepository = emitenteRepository;
         this.restTemplateBuilder = restTemplateBuilder;
+        this.dadosBasicosRepository = dadosBasicosRepository;
     }
 
     public ResponseEntity<ScanRequest> requestScan(ScanRequest scanRequest) {
@@ -148,16 +151,12 @@ public class NotaFiscalService {
             itemNotaFiscal.setNotaFiscal(notaFiscal);
             item.getItemNotaFiscalList().add(itemNotaFiscal);
 
-            itemRepository.save(item);
-
             itemNotaFiscalList.add(itemNotaFiscal);
         });
 
         notaFiscal.setItems(itemNotaFiscalList);
-
         notaFiscalRepository.save(notaFiscal);
-        emitenteRepository.save(notaFiscal.getEmitente());
-        itemNotaFiscalRepository.saveAll(itemNotaFiscalList);
+
     }
 
     private ScanRequest saveScanRequest(ScanRequest scanRequest) {

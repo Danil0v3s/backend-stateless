@@ -14,7 +14,7 @@ public class ItemNotaFiscal {
     @EmbeddedId
     private ItemNotaFiscalPK itemNotaFiscalPK;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "item_ean")
     private Item item;
 
