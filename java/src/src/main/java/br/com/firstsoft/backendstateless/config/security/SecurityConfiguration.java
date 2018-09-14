@@ -1,8 +1,8 @@
-package br.com.firstsoft.backendstateless.security;
+package br.com.firstsoft.backendstateless.config.security;
 
-import br.com.firstsoft.backendstateless.security.filter.FacebookAuthenticationFilter;
-import br.com.firstsoft.backendstateless.security.filter.GoogleAuthenticationFilter;
-import br.com.firstsoft.backendstateless.security.filter.TokenBasedAuthorizationFilter;
+import br.com.firstsoft.backendstateless.config.security.filter.FacebookAuthenticationFilter;
+import br.com.firstsoft.backendstateless.config.security.filter.GoogleAuthenticationFilter;
+import br.com.firstsoft.backendstateless.config.security.filter.TokenBasedAuthorizationFilter;
 import br.com.firstsoft.backendstateless.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

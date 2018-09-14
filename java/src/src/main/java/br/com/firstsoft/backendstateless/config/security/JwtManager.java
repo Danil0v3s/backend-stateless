@@ -1,4 +1,4 @@
-package br.com.firstsoft.backendstateless.security;
+package br.com.firstsoft.backendstateless.config.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

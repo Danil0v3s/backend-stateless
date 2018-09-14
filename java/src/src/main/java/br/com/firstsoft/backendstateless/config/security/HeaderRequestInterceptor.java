@@ -1,4 +1,4 @@
-package br.com.firstsoft.backendstateless.security;
+package br.com.firstsoft.backendstateless.config.security;
 
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;

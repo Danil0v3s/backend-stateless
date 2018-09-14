@@ -1,6 +1,6 @@
-package br.com.firstsoft.backendstateless.oauth;
+package br.com.firstsoft.backendstateless.config.oauth;
 
-import br.com.firstsoft.backendstateless.security.HeaderRequestInterceptor;
+import br.com.firstsoft.backendstateless.config.security.HeaderRequestInterceptor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestInterceptor;

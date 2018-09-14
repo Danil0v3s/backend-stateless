@@ -1,8 +1,8 @@
-package br.com.firstsoft.backendstateless.security.filter;
+package br.com.firstsoft.backendstateless.config.security.filter;
 
 import br.com.firstsoft.backendstateless.business.vo.User;
-import br.com.firstsoft.backendstateless.oauth.FacebookProvider;
-import br.com.firstsoft.backendstateless.security.JwtManager;
+import br.com.firstsoft.backendstateless.config.oauth.FacebookProvider;
+import br.com.firstsoft.backendstateless.config.security.JwtManager;
 import br.com.firstsoft.backendstateless.services.UserService;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
