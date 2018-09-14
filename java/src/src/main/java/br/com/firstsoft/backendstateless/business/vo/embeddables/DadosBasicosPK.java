@@ -5,13 +5,14 @@ import lombok.Data;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @Embeddable
 public class DadosBasicosPK implements Serializable {
 
     @JsonProperty("DatadeEmissao")
-    private String dataEmissao;
+    private Date dataEmissao;
     @JsonProperty("Modelo")
     private String modelo;
     @JsonProperty("Numero")
@@ -24,7 +25,7 @@ public class DadosBasicosPK implements Serializable {
     public DadosBasicosPK() {
     }
 
-    public DadosBasicosPK(String dataEmissao, String modelo, String numero, String serie, String valorNota) {
+    public DadosBasicosPK(Date dataEmissao, String modelo, String numero, String serie, String valorNota) {
         this.dataEmissao = dataEmissao;
         this.modelo = modelo;
         this.numero = numero;
