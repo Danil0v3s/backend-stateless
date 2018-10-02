@@ -23,6 +23,8 @@ import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -102,7 +104,12 @@ public class NotaFiscalService {
             if (notaFiscalDTO != null) {
                 managedScanRequest.setScanRequestResult(ScanRequestResult.SUCCESS);
 
-                saveNotaFiscal(notaFiscalDTO);
+                try {
+                    saveNotaFiscal(notaFiscalDTO);
+                } catch (ParseException e) {
+                    managedScanRequest.setScanRequestResult(ScanRequestResult.ERROR);
+                    e.printStackTrace();
+                }
             } else {
                 managedScanRequest.setScanRequestResult(ScanRequestResult.ERROR);
             }
@@ -112,13 +119,15 @@ public class NotaFiscalService {
         scanThread.start();
     }
 
-    private void saveNotaFiscal(NotaFiscalDTO notaFiscalDTO) {
+    private void saveNotaFiscal(NotaFiscalDTO notaFiscalDTO) throws ParseException {
         NotaFiscal notaFiscal = new NotaFiscal();
         notaFiscal.setChaveAcesso(notaFiscalDTO.getChaveAcesso());
         notaFiscal.setEmitente(notaFiscalDTO.getEmitente());
 
         DadosBasicosDTO dadosBasicosDTO = notaFiscalDTO.getDadosBasicos();
-        DadosBasicosPK dadosBasicosPK = new DadosBasicosPK(dadosBasicosDTO.getDataEmissao(),
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ssZ");
+        Date dataEmissao = simpleDateFormat.parse(dadosBasicosDTO.getDataEmissao());
+        DadosBasicosPK dadosBasicosPK = new DadosBasicosPK(dataEmissao,
                 dadosBasicosDTO.getModelo(),
                 dadosBasicosDTO.getNumero(),
                 dadosBasicosDTO.getSerie(),
